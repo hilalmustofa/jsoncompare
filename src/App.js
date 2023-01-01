@@ -82,10 +82,10 @@ const App = () => {
     <div>
       <div className="container">
         <div style={{ display: "flex", justifyContent: "center", marginTop: "20px", marginBottom: "5px" }}>
-          <img src={require("./assets/comparejson.png")} style={{ height: "45px" }} alt="logo" />
+          <img src={require("./assets/comparejson.png")} style={{ height: "40px" }} alt="logo" />
         </div>
-        <h1 class="title is-4 has-text-centered">Multiple JSON diff checker</h1>
-        <h2 class="subtitle is-5 has-text-centered">Compare multiple json objects and find the differences</h2>
+        <h1 class="title is-5 has-text-centered">Multiple JSON diff checker</h1>
+        <h2 class="subtitle is-6 has-text-centered">Compare multiple json objects and find the differences</h2>
         <div className="columns">
           <div className="column">
             <input className="input has-text-centered" type="text" value={baseName} onChange={e => setBaseName(e.target.value)} placeholder="Enter a name" />
@@ -124,6 +124,15 @@ const App = () => {
           </div>
         </div>
       </div>
+
+  <div class="content has-text-centered" style={{ position: "fixed", bottom: 10, left:10}}>
+    <p>
+      QA Tool created by <a href="https://github.com/hilalmustofa">mzhll</a> @2023
+    </p>
+  </div>
+
+
+
     </div>
   );
 
