@@ -1,83 +1,160 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect } from 'react';
 import deepDiff from 'deep-diff';
 
-const App = () => {
+function App() {
   const [baseValue, setBaseValue] = useState('');
   const [firstValue, setFirstValue] = useState('');
   const [secondValue, setSecondValue] = useState('');
-  const [base, setBase] = useState({});
-  const [first, setFirst] = useState({});
-  const [second, setSecond] = useState({});
-  const [diff1, setDiff1] = useState(null);
-  const [diff2, setDiff2] = useState(null);
+  const [base, setBase] = useState('');
+  const [first, setFirst] = useState('');
+  const [second, setSecond] = useState('');
   const [baseName, setBaseName] = useState('');
   const [firstName, setFirstName] = useState('');
   const [secondName, setSecondName] = useState('');
+  const [diffs, setDiffs] = useState([]);
+  const [diffs2, setDiffs2] = useState([]);
+  const [highlightedJson, setHighlightedJson] = useState('');
+  const [highlightedJson2, setHighlightedJson2] = useState('');
   const [baseError, setBaseError] = useState('');
   const [firstError, setFirstError] = useState('');
   const [secondError, setSecondError] = useState('');
 
   useEffect(() => {
-    setDiff1(deepDiff.diff(base, first));
-    setDiff2(deepDiff.diff(first, second));
-  }, [base, first, second]);
+    const diff1 = deepDiff(base, first);
+    const diff2 = deepDiff(first, second);
+    setDiffs(diff1)
+    setDiffs2(diff2)
+  }, [base, first, second])
+
+  useEffect(() => {
+    if (Array.isArray(diffs)) {
+      diffs.forEach(diff => {
+        if (diff.kind === 'E') {
+          let path = diff.path;
+          let value = diff.rhs;
+          let obj = first;
+          while (path.length > 1) {
+            obj = obj[path.shift()];
+          }
+          obj[path[0]] = `<span style='background-color:pink'>${value}</span>`;
+        } else if (diff.kind === 'D') {
+          let path = diff.path;
+          let value = diff.lhs;
+          let obj = first;
+          while (path.length > 1) {
+            obj = obj[path.shift()];
+          }
+          let key = path[0];
+          delete obj[key];
+          obj[`<del>${key}</del>`] = `<del>${value}</del>`;
+        } else if (diff.kind === 'A') {
+          let path = diff.path;
+          let index = diff.index;
+          let value = diff.item.rhs;
+          let obj = first;
+          while (path.length > 1) {
+            obj = obj[path.shift()];
+          }
+          obj[path[0]].splice(index, 0, `<span style='background-color:green'>${value}</span>`);
+        } else if (diff.kind === 'N') {
+          let path = diff.path;
+          let value = diff.rhs;
+          let obj = first;
+          while (path.length > 1) {
+            obj = obj[path.shift()];
+          }
+          obj[path[0]] = `<span style='background-color:cyan'>${value}</span>`;
+        }
+      });
+      setHighlightedJson(JSON.stringify(first, null, 2));
+    } else if (typeof diffs === 'object') {
+      // Handle case where objects are completely different
+      setHighlightedJson('Objects are completely different');
+    }
+  }, [diffs, first]);
+
+  useEffect(() => {
+    if (Array.isArray(diffs2)) {
+      diffs2.forEach(diff => {
+        if (diff.kind === 'E') {
+          let path = diff.path;
+          let value = diff.rhs;
+          let obj = second;
+          while (path.length > 1) {
+            obj = obj[path.shift()];
+          }
+          obj[path[0]] = `<span style='background-color:pink'>${value}</span>`;
+        } else if (diff.kind === 'D') {
+          let path = diff.path;
+          let value = diff.lhs;
+          let obj = second;
+          while (path.length > 1) {
+            obj = obj[path.shift()];
+          }
+          let key = path[0];
+          delete obj[key];
+          obj[`<del>${key}</del>`] = `<del>${value}</del>`;
+        } else if (diff.kind === 'A') {
+          let path = diff.path;
+          let index = diff.index;
+          let value = diff.item.rhs;
+          let obj = second;
+          while (path.length > 1) {
+            obj = obj[path.shift()];
+          }
+          obj[path[0]].splice(index, 0, `<span style='background-color:green'>${value}</span>`);
+        } else if (diff.kind === 'N') {
+          let path = diff.path;
+          let key = path[path.length - 1];
+          let value = diff.rhs;
+          let obj = second;
+          while (path.length > 1) {
+            obj = obj[path.shift()];
+          }
+          obj[`<span style='background-color:cyan'>${key}</span>`] = `<span style='background-color:cyan'>${value}</span>`;
+        }
+      });
+      setHighlightedJson2(JSON.stringify(second, null, 2));
+    } else if (typeof diffs2 === 'object') {
+      // Handle case where objects are completely different
+      setHighlightedJson2('Objects are completely different');
+    }
+  }, [diffs2, second]);
+
 
   const handleSubmit = () => {
-    try {
-      setBase(JSON.parse(baseValue));
-      setBaseError(null);
-    } catch (error) {
-      setBaseError('Invalid JSON chef, ngowar lu');
+    if (baseValue === '') {
+      setBaseError('JSON input cannot be empty');
+    } else {
+      try {
+        setBase(JSON.parse(baseValue));
+        setBaseError(null);
+      } catch (error) {
+        setBaseError('Invalid JSON chef, ngowar lu');
 
-    }
-
-    try {
-      setFirst(JSON.parse(firstValue));
-      setFirstError(null);
-    } catch (error) {
-      setFirstError('Invalid JSON chef, ngowar lu');
-    }
-
-    try {
-      setSecond(JSON.parse(secondValue));
-      setSecondError(null);
-    } catch (error) {
-      setSecondError('Invalid JSON chef, ngowar lu');
-    }
-  };
-
-
-  const highlightChangedValues = (value, diff) => {
-    let result = '<pre>';
-    let jsonString = JSON.stringify(value, null, 2);
-    if (diff) {
-      for (const key of Object.keys(value)) {
-        const changedValue = diff.find(item => item.path[0] === key);
-        if (changedValue) {
-          const path = changedValue.path.join('.');
-          jsonString = jsonString.replace(new RegExp(`"${path}":\\s*"([^"]*)"`, 'g'), '<span class="changed">$&</span>');
-          jsonString = jsonString.replace(new RegExp(`"${path}":\\s*{`, 'g'), '<span class="changed">$&</span>{');
-          jsonString = jsonString.replace(new RegExp(`"${path}":\\s*\\[`, 'g'), '<span class="changed">$&</span>[');
-          jsonString = jsonString.replace(new RegExp(`"${path}":\\s*\\b([^"]*)\\b`, 'g'), '<span class="changed">$&</span>');
-        }
       }
     }
-
-    // Split the JSON string into an array of lines
-    const lines = jsonString.split('\n');
-
-    // Add line numbering to each line
-    for (let i = 0; i < lines.length; i++) {
-      result += `<span class="line-number">${i + 1}</span> ${lines[i]}\n`;
+    if (firstValue === '') {
+      setFirstError('JSON input cannot be empty');
+    } else {
+      try {
+        setFirst(JSON.parse(firstValue));
+        setFirstError(null);
+      } catch (error) {
+        setFirstError('Invalid JSON chef, ngowar lu');
+      }
     }
-
-    result += '</pre>';
-    return result;
-  };
-
-
-
-
+    if (secondValue === '') {
+      setSecondError('JSON input cannot be empty');
+    } else {
+      try {
+        setSecond(JSON.parse(secondValue));
+        setSecondError(null);
+      } catch (error) {
+        setSecondError('Invalid JSON chef, ngowar lu');
+      }
+    }
+  }
   return (
     <div>
       <div className="container">
@@ -89,15 +166,15 @@ const App = () => {
         <div className="columns">
           <div className="column">
             <input className="input has-text-centered" type="text" value={baseName} onChange={e => setBaseName(e.target.value)} placeholder="Enter a name" />
-            <textarea className="textarea" value={baseValue} onChange={e => setBaseValue(e.target.value)} placeholder="JSON goes here chef" rows="5" resize="both" style={{ fontSize: "14px" }} />
+            <textarea className="textarea has-text-centered" value={baseValue} onChange={e => setBaseValue(e.target.value)} placeholder="JSON goes here chef" rows="15" resize="both" style={{ fontSize: "14px" }} />
           </div>
           <div className="column">
             <input className="input has-text-centered" type="text" value={firstName} onChange={e => setFirstName(e.target.value)} placeholder="Enter a name" />
-            <textarea className="textarea" value={firstValue} onChange={e => setFirstValue(e.target.value)} placeholder="JSON goes here chef" rows="5" resize="both" style={{ fontSize: "14px" }} />
+            <textarea className="textarea has-text-centered" value={firstValue} onChange={e => setFirstValue(e.target.value)} placeholder="JSON goes here chef" rows="15" resize="both" style={{ fontSize: "14px" }} />
           </div>
           <div className="column">
             <input className="input has-text-centered" type="text" value={secondName} onChange={e => setSecondName(e.target.value)} placeholder="Enter a name" />
-            <textarea className="textarea" value={secondValue} onChange={e => setSecondValue(e.target.value)} placeholder="JSON goes here chef" rows="5" resize="both" style={{ fontSize: "14px" }} />
+            <textarea className="textarea has-text-centered" value={secondValue} onChange={e => setSecondValue(e.target.value)} placeholder="JSON goes here chef" rows="15" resize="both" style={{ fontSize: "14px" }} />
           </div>
         </div>
         <br />
@@ -106,36 +183,33 @@ const App = () => {
             Submit
           </button>
         </div>
-        <div className="columns">
+        <div className="columns is-centered">
           <div className="column">
             <h3 className="title is-5 has-text-centered">{baseName}</h3>
             {baseError && <p className="has-text-danger has-text-centered">{baseError}</p>}
-            {!baseError && <div dangerouslySetInnerHTML={{ __html: highlightChangedValues(base) }} />}
+            {!baseError && <pre dangerouslySetInnerHTML={{ __html: JSON.stringify(base, null, 2) }} />}
           </div>
           <div className="column">
             <h3 className="title is-5 has-text-centered">{firstName}</h3>
             {firstError && <p className="has-text-danger has-text-centered">{firstError}</p>}
-            {!firstError && <div dangerouslySetInnerHTML={{ __html: highlightChangedValues(first, diff1) }} />}
+            {!firstError && <pre dangerouslySetInnerHTML={{ __html: highlightedJson }} />}
           </div>
           <div className="column">
             <h3 className="title is-5 has-text-centered">{secondName}</h3>
             {secondError && <p className="has-text-danger has-text-centered">{secondError}</p>}
-            {!secondError && <div dangerouslySetInnerHTML={{ __html: highlightChangedValues(second, diff2) }} />}
+            {!secondError && <pre dangerouslySetInnerHTML={{ __html: highlightedJson2 }} />}
           </div>
         </div>
       </div>
-
-  <div class="content has-text-centered" style={{ position: "fixed", bottom: 10, left:10}}>
-    <p>
-      QA Tool created by <a href="https://github.com/hilalmustofa">mzhll</a> @2023
-    </p>
-  </div>
-
-
-
+      <div class="content has-text-centered is-small" style={{ position: "fixed", bottom: 10, left: 10 }}>
+        <p>
+          QA Tool created by <a href="https://github.com/hilalmustofa">mzhll</a> @2023
+        </p>
+      </div>
     </div>
   );
+}
 
-};
+
 
 export default App;

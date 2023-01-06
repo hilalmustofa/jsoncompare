@@ -63,10 +63,13 @@
     padding-right: 5px;
   }
   
-  .changed {
+  .highlighted {
     background-color: pink;
   }
   
+  .error {
+    color: green;
+  }
 
 
 .block:not(:last-child),
