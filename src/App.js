@@ -66,12 +66,18 @@ function App() {
           obj[path[0]] = `<span style='background-color:cyan'>${value}</span>`;
         }
       });
-      setHighlightedJson(JSON.stringify(first, null, 2));
+  
+      let highlightedJson = JSON.stringify(first, null, 2);
+      highlightedJson = highlightedJson.replace(/,/g, ",");
+      let lineNumber = 1;
+      highlightedJson = highlightedJson.replace(/^(.*)$/gm, (p1) => `<span class="line-number">${lineNumber++} </span>${p1}`);
+      setHighlightedJson(highlightedJson);
     } else if (typeof diffs === 'object') {
       // Handle case where objects are completely different
       setHighlightedJson('Objects are completely different');
     }
   }, [diffs, first]);
+  
 
   useEffect(() => {
     if (Array.isArray(diffs2)) {
@@ -105,26 +111,36 @@ function App() {
           obj[path[0]].splice(index, 0, `<span style='background-color:green'>${value}</span>`);
         } else if (diff.kind === 'N') {
           let path = diff.path;
-          let key = path[path.length - 1];
           let value = diff.rhs;
           let obj = second;
           while (path.length > 1) {
             obj = obj[path.shift()];
           }
-          obj[`<span style='background-color:cyan'>${key}</span>`] = `<span style='background-color:cyan'>${value}</span>`;
+          obj[path[0]] = `<span style='background-color:cyan'>${value}</span>`;
         }
       });
-      setHighlightedJson2(JSON.stringify(second, null, 2));
+  
+      let highlightedJson2 = JSON.stringify(second, null, 2);
+      highlightedJson2 = highlightedJson2.replace(/,/g, ",");
+      let lineNumber = 1;
+      highlightedJson2 = highlightedJson2.replace(/^(.*)$/gm,(p1) => `<span class="line-number">${lineNumber++} </span>${p1}`);
+      setHighlightedJson2(highlightedJson2);
     } else if (typeof diffs2 === 'object') {
       // Handle case where objects are completely different
-      setHighlightedJson2('Objects are completely different');
+      setHighlightedJson('Objects are completely different');
     }
   }, [diffs2, second]);
+  
+  let dasar = JSON.stringify(base, null, 2);
+      dasar = dasar.replace(/,/g, "");
+      let lineNumber = 1;
+      dasar = dasar.replace(/^(.*)$/gm, (p1) => `<span class="line-number">${lineNumber++} </span>${p1}`);
+    
 
 
   const handleSubmit = () => {
     if (baseValue === '') {
-      setBaseError('JSON input cannot be empty');
+      setBaseError('JSON is empty');
     } else {
       try {
         setBase(JSON.parse(baseValue));
@@ -135,7 +151,7 @@ function App() {
       }
     }
     if (firstValue === '') {
-      setFirstError('JSON input cannot be empty');
+      setFirstError('JSON is empty');
     } else {
       try {
         setFirst(JSON.parse(firstValue));
@@ -145,7 +161,7 @@ function App() {
       }
     }
     if (secondValue === '') {
-      setSecondError('JSON input cannot be empty');
+      setSecondError('JSON is empty');
     } else {
       try {
         setSecond(JSON.parse(secondValue));
@@ -154,7 +170,14 @@ function App() {
         setSecondError('Invalid JSON chef, ngowar lu');
       }
     }
+
+    if (baseValue === firstValue) {
+      setFirstError('Json are identical chef')
+    } if (firstValue === secondValue) {
+      setSecondError('Json are identical chef')
+    }
   }
+
   return (
     <div>
       <div className="container">
@@ -187,7 +210,7 @@ function App() {
           <div className="column">
             <h3 className="title is-5 has-text-centered">{baseName}</h3>
             {baseError && <p className="has-text-danger has-text-centered">{baseError}</p>}
-            {!baseError && <pre dangerouslySetInnerHTML={{ __html: JSON.stringify(base, null, 2) }} />}
+            {!baseError && <pre dangerouslySetInnerHTML={{ __html: dasar }} />}
           </div>
           <div className="column">
             <h3 className="title is-5 has-text-centered">{firstName}</h3>
@@ -201,7 +224,7 @@ function App() {
           </div>
         </div>
       </div>
-      <div class="content is-small" style={{marginTop:40, marginBottom:10, marginRight: 10, textAlign: 'right' }}>
+      <div class="content has-text-centered is-small" style={{ position: "fixed", bottom: 10, left: 10 }}>
         <p>
           QA Tool created by <a href="https://github.com/hilalmustofa">mzhll</a> @2023
         </p>
