@@ -201,7 +201,7 @@ function App() {
           </div>
         </div>
       </div>
-      <div class="content has-text-centered is-small" style={{ position: "fixed", bottom: 10, left: 10 }}>
+      <div class="content is-small" style={{marginTop:40, marginBottom:10, marginRight: 10, textAlign: 'right' }}>
         <p>
           QA Tool created by <a href="https://github.com/hilalmustofa">mzhll</a> @2023
         </p>
