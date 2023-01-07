@@ -261,7 +261,7 @@ function App() {
           </div>
         </div>
       </div>
-      <div class="content has-text-centered is-small" style={{ position: "fixed", bottom: 10, left: 10 }}>
+      <div class="content is-small" style={{ position: "relative", marginBottom: 10, marginTop:30, left: 10 }}>
         <p>
           QA Tool created by <a href="https://github.com/hilalmustofa">mzhll</a> @2023
         </p>
