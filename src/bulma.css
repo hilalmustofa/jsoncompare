@@ -547,7 +547,7 @@ pre {
     overflow-x: auto;
     padding: 1.25rem 1.5rem;
     white-space: pre;
-    word-wrap: normal
+    word-wrap: normal;
 }
 
 pre code {
@@ -7684,17 +7684,27 @@ label.panel-block:hover {
 .tabs.is-large {
     font-size: 1.5rem
 }
+.button {
+    z-index: 1;
+  }
+  
+  .hidden-text {
+    position: absolute;
+    z-index: -1;
+  }
 
 .column {
     display: block;
     margin: auto;
     flex-basis: 0;
     flex-grow: 1;
+    min-width: 400px;
     flex-shrink: 1;
     padding: .75rem;
     overflow-y: scroll;
     justify-content: center;
 }
+
 
 
 .columns.is-mobile>.column.is-narrow {

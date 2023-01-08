@@ -8,14 +8,10 @@
     "@testing-library/user-event": "^13.5.0",
     "animate.css": "^4.1.1",
     "deep-diff": "^1.0.2",
-    "diff-json": "^2.0.0",
-    "json-diff": "^1.0.0",
-    "json-pretty-html": "^1.1.6",
-    "lodash": "^4.17.21",
+    "json-stringify-safe": "^5.0.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-scripts": "5.0.1",
-    "react-syntax-highlighter": "^15.5.0",
     "web-vitals": "^2.1.4"
   },
   "scripts": {
