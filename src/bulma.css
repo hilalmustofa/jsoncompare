@@ -7701,7 +7701,6 @@ label.panel-block:hover {
     min-width: 400px;
     flex-shrink: 1;
     padding: .75rem;
-    overflow-y: scroll;
     justify-content: center;
 }
 
