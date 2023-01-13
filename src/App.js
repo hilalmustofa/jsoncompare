@@ -146,7 +146,7 @@ function App() {
       diffs.forEach(diff => {
         if (diff.kind === 'E') {
           let path = diff.path;
-          let value = diff.rhs;
+          let value = stringify(diff.rhs);
           let obj = Json1;
           while (path.length > 1) {
             obj = obj[path.shift()];
@@ -154,7 +154,7 @@ function App() {
           obj[path[0]] = `<span style='background-color:pink'>${value}</span>`;
         } else if (diff.kind === 'D') {
           let path = diff.path;
-          let value = diff.lhs;
+          let value = stringify(diff.rhs);
           let obj = Json1;
           while (path.length > 1) {
             obj = obj[path.shift()];
@@ -173,7 +173,7 @@ function App() {
           obj[path[0]].splice(index, 0, `<span style='background-color:green'>${value}</span>`);
         } else if (diff.kind === 'N') {
           let path = diff.path;
-          let value = diff.rhs;
+          let value = stringify(diff.rhs);
           let obj = Json1;
           while (path.length > 1) {
             obj = obj[path.shift()];
@@ -184,8 +184,8 @@ function App() {
         }
       });
 
-      let highlightedJson = stringify(Json1, null, 2);
-      highlightedJson = highlightedJson.replace(/,/g, ",");
+      let highlightedJson = stringify(Json1,null,2);
+      highlightedJson = highlightedJson.replace(/,/g, ",").replace(/\\/g, '');
       let lineNumber = 1;
       highlightedJson = highlightedJson.replace(/^(.*)$/gm, (p1) => `<span class="line-number">${lineNumber++} </span>${p1}`);
       setHighlightedJson(highlightedJson);
@@ -198,7 +198,7 @@ function App() {
       diffs2.forEach(diff => {
         if (diff.kind === 'E') {
           let path = diff.path;
-          let value = diff.rhs;
+          let value = stringify(diff.rhs);
           let obj = Json2;
           while (path.length > 1) {
             obj = obj[path.shift()];
@@ -206,7 +206,7 @@ function App() {
           obj[path[0]] = `<span style='background-color:pink'>${value}</span>`;
         } else if (diff.kind === 'D') {
           let path = diff.path;
-          let value = diff.lhs;
+          let value = stringify(diff.lhs);
           let obj = Json2;
           while (path.length > 1) {
             obj = obj[path.shift()];
@@ -225,7 +225,7 @@ function App() {
           obj[path[0]].splice(index, 0, `<span style='background-color:green'>${value}</span>`);
         } else if (diff.kind === 'N') {
           let path = diff.path;
-          let value = diff.rhs;
+          let value = stringify(diff.rhs);
           let obj = Json2;
           while (path.length > 1) {
             obj = obj[path.shift()];
@@ -237,7 +237,7 @@ function App() {
       });
 
       let highlightedJson2 = stringify(Json2, null, 2);
-      highlightedJson2 = highlightedJson2.replace(/,/g, ",");
+      highlightedJson2 = highlightedJson2.replace(/,/g, ",").replace(/\\/g, '');
       let lineNumber = 1;
       highlightedJson2 = highlightedJson2.replace(/^(.*)$/gm, (p1) => `<span class="line-number">${lineNumber++} </span>${p1}`);
       setHighlightedJson2(highlightedJson2);
@@ -250,7 +250,7 @@ function App() {
       diffs3.forEach(diff => {
         if (diff.kind === 'E') {
           let path = diff.path;
-          let value = diff.rhs;
+          let value = stringify(diff.rhs);
           let obj = Json3;
           while (path.length > 1) {
             obj = obj[path.shift()];
@@ -258,7 +258,7 @@ function App() {
           obj[path[0]] = `<span style='background-color:pink'>${value}</span>`;
         } else if (diff.kind === 'D') {
           let path = diff.path;
-          let value = diff.lhs;
+          let value = stringify(diff.lhs);
           let obj = Json3;
           while (path.length > 1) {
             obj = obj[path.shift()];
@@ -277,7 +277,7 @@ function App() {
           obj[path[0]].splice(index, 0, `<span style='background-color:green'>${value}</span>`);
         } else if (diff.kind === 'N') {
           let path = diff.path;
-          let value = diff.rhs;
+          let value = stringify(diff.rhs);
           let obj = Json3;
           while (path.length > 1) {
             obj = obj[path.shift()];
@@ -289,7 +289,7 @@ function App() {
       });
 
       let highlightedJson3 = stringify(Json3, null, 2);
-      highlightedJson3 = highlightedJson3.replace(/,/g, ",");
+      highlightedJson3 = highlightedJson3.replace(/,/g, ",").replace(/\\/g, '');
       let lineNumber = 1;
       highlightedJson3 = highlightedJson3.replace(/^(.*)$/gm, (p1) => `<span class="line-number">${lineNumber++} </span>${p1}`);
       setHighlightedJson3(highlightedJson3);
